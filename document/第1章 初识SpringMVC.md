@@ -48,8 +48,8 @@ MVC架构模式关注的是整个应用程序的层次关系和分离思想。�
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=kZ6Eh&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 # 什么是SpringMVC
 ## SpringMVC概述
-SpringMVC是一个实现了MVC架构模式的Web框架，底层基于Servlet实现。
-SpringMVC已经将MVC架构模式实现了，因此只要我们是基于SpringMVC框架写代码，编写的程序就是符合MVC架构模式的。（**MVC的架子搭好了，我们只需要添添补补**）
+<span style="color:red;">**SpringMVC是一个实现了MVC架构模式的Web框架，底层基于Servlet实现。**</span>
+SpringMVC已经 将MVC架构模式实现了，因此只要我们是基于SpringMVC框架写代码，编写的程序就是符合MVC架构模式的。（**MVC的架子搭好了，我们只需要添添补补**）
 Spring框架中有一个子项目叫做Spring Web，Spring Web子项目当中包含很多模块，例如：
 
 - Spring MVC
@@ -146,6 +146,7 @@ SpringMVC框架帮我们做了什么，与纯粹的Servlet开发有什么区别�
         <groupId>jakarta.servlet</groupId>
         <artifactId>jakarta.servlet-api</artifactId>
         <version>6.0.0</version>
+        <!--provided表示这个依赖由第三方容器提供，打war包的时候，这个依赖不会打入war包内，这个依赖由其他容器提供-->
         <scope>provided</scope>
     </dependency>
     <!--Spring6和Thymeleaf整合依赖-->
@@ -196,7 +197,7 @@ Spring MVC是一个web框架，在javaweb中谁来负责接收请求，处理请
 </web-app>
 ```
 
-DispatcherServlet是SpringMVC框架为我们提供的最核心的类，它是整个SpringMVC框架的前端控制器，负责接收HTTP请求、将请求路由到处理程序、处理响应信息，最终将响应返回给客户端。DispatcherServlet是Web应用程序的主要入口点之一，它的职责包括：
+<span style="color:red;">**DispatcherServlet是SpringMVC框架为我们提供的最核心的类，它是整个SpringMVC框架的前端控制器**</span>，负责接收HTTP请求、将请求路由到处理程序、处理响应信息，最终将响应返回给客户端。DispatcherServlet是Web应用程序的主要入口点之一，它的职责包括： 
 
 1.  接收客户端的HTTP请求：DispatcherServlet监听来自Web浏览器的HTTP请求，然后根据请求的URL将请求数据解析为Request对象。 
 2.  处理请求的URL：DispatcherServlet将请求的URL（Uniform Resource Locator）与处理程序进行匹配，确定要调用哪个控制器（Controller）来处理此请求。 
@@ -227,7 +228,7 @@ public class FirstController {
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=jzufR&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 ## 配置springmvc-servlet.xml文件
-SpringMVC框架有它自己的配置文件，该配置文件的名字默认为：<servlet-name>-servlet.xml，默认存放的位置是WEB-INF 目录下：
+SpringMVC框架有它自己的配置文件，该配置文件的名字默认为：\<servlet-name>-servlet.xml，默认存放的位置是WEB-INF 目录下：（\<servlet-name>是web.xml文件中配置的那个servlet的名字）
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -238,11 +239,12 @@ SpringMVC框架有它自己的配置文件，该配置文件的名字默认为�
     <context:component-scan base-package="com.powernode.springmvc.controller"/>
     <!--视图解析器-->
     <bean id="thymeleafViewResolver" class="org.thymeleaf.spring6.view.ThymeleafViewResolver">
-        <!--作用于视图渲染的过程中，可以设置视图渲染后输出时采用的编码字符集-->
+        <!--作用于视图渲染的过程中，可以设置视图渲染后输出时采用的编码字符集(渲染给浏览器时的字符编码)-->
         <property name="characterEncoding" value="UTF-8"/>
         <!--如果配置多个视图解析器，它来决定优先使用哪个视图解析器，它的值越小优先级越高-->
         <property name="order" value="1"/>
         <!--当 ThymeleafViewResolver 渲染模板时，会使用该模板引擎来解析、编译和渲染模板-->
+        <!--使用这个模版引擎可以将Thymeleaf语法格式的字符串转换为html代码-->
         <property name="templateEngine">
             <bean class="org.thymeleaf.spring6.SpringTemplateEngine">
                 <!--用于指定 Thymeleaf 模板引擎使用的模板解析器。模板解析器负责根据模板位置、模板资源名称、文件编码等信息，加载模板并对其进行解析-->
@@ -251,6 +253,7 @@ SpringMVC框架有它自己的配置文件，该配置文件的名字默认为�
                         <!--设置模板文件的位置（前缀）-->
                         <property name="prefix" value="/WEB-INF/templates/"/>
                         <!--设置模板文件后缀（后缀），Thymeleaf文件扩展名不一定是html，也可以是其他，例如txt，大部分都是html-->
+                        <!--将来要在 xxx.html 编写符合Thymeleaf语法格式的字符串，Thymeleaf模版字符串-->
                         <property name="suffix" value=".html"/>
                         <!--设置模板类型，例如：HTML,TEXT,JAVASCRIPT,CSS等-->
                         <property name="templateMode" value="HTML"/>
