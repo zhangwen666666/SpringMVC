@@ -186,10 +186,11 @@ public class ProductController {
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=lsaj2&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 # RequestMapping注解的value属性
 ## value属性的使用
-value属性是该注解最核心的属性，value属性填写的是请求路径，也就是说通过该请求路径与对应的控制器的方法绑定在一起。另外通过源码可以看到value属性是一个字符串数组：
+value属性是该注解最核心的属性，value属性填写的是请求路径，也就是说通过该请求路径与对应的控制器的方法绑定在一起。另外通过源码可以看到**value属性是一个字符串数组：**
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710329488513-948e1e58-9984-458f-9c01-75601de3c0c8.png#averageHue=%23fcfbf9&clientId=ub006eeb4-d5e7-4&from=paste&height=85&id=ua2fa9331&originHeight=85&originWidth=387&originalType=binary&ratio=1&rotation=0&showTitle=false&size=9261&status=done&style=shadow&taskId=udb4000d7-7671-432d-9b64-b23b32e626f&title=&width=387)
-既然是数组，就表示可以提供多个路径，也就是说，在SpringMVC中，多个不同的请求路径可以映射同一个控制器的同一个方法：
+既然是数组，就表示可以提供多个路径，也就是说，在SpringMVC中，**多个不同的请求路径可以映射同一个控制器的同一个方法**。此外，value还有一个别名path。
 编写新的控制器：
+
 ```java
 package com.powernode.springmvc.controller;
 
@@ -254,8 +255,8 @@ public class RequestMappingTestController {
 ## Ant风格的value
 value是可以用来匹配路径的，路径支持模糊匹配，我们把这种模糊匹配称之为Ant风格。关于路径中的通配符包括：
 
-- ?，代表任意一个字符
-- *，代表0到N个任意字符
+- ?，代表任意一个字符  (这个?不可以是?和/，不能空着)
+- *，代表0到N个任意字符  (这个\*不可以是?和/)
 - **，代表0到N个任意字符，并且路径中可以出现路径分隔符 /
 
 注意：** 通配符在使用时，左右不能出现字符，只能是 /
@@ -329,7 +330,8 @@ public String testValueAnt(){
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710409419674-7475d2c4-989a-4547-9f8c-a2964b2d7eb7.png#averageHue=%23e5c592&clientId=u9e0c3730-20d1-4&from=paste&height=278&id=ub986b869&originHeight=278&originWidth=600&originalType=binary&ratio=1&rotation=0&showTitle=false&size=21339&status=done&style=shadow&taskId=u45bed6ca-c0cd-41d6-aea2-4b396844a19&title=&width=600)
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=eaYgY&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
-注意：/x**z/ 实际上并没有使用通配符 **，本质上还是使用的 *，因为通配符 ** 在使用的时候，左右两边都不能有任何字符，必须是 /。
+注意：/x\*\*z/ 实际上并没有使用通配符 \*\*，本质上还是使用的 *，因为通配符 ** 在使用的时候，左右两边都不能有任何字符，必须是 /。
+
 ```java
 @RequestMapping("/**/testValueAnt")
 public String testValueAnt(){
@@ -338,7 +340,8 @@ public String testValueAnt(){
 ```
 启动服务器发现报错了：
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710410631877-81bfcc14-3ead-4f2c-99cf-69e0e39c9b3e.png#averageHue=%23fcfbfa&clientId=u9e0c3730-20d1-4&from=paste&height=176&id=u4e591839&originHeight=176&originWidth=963&originalType=binary&ratio=1&rotation=0&showTitle=false&size=29038&status=done&style=shadow&taskId=u56772db8-8c87-4a36-80c7-6b3ff2a47cf&title=&width=963)
-以上写法在Spring5的时候是支持的，但是在Spring6中进行了严格的规定，** 通配符只能出现在路径的末尾，例如：
+以上写法在Spring5的时候是支持的，**但是在Spring6中进行了严格的规定，\*\* 通配符只能出现在路径的末尾**，例如：
+
 ```java
 @RequestMapping("/testValueAnt/**")
 public String testValueAnt(){

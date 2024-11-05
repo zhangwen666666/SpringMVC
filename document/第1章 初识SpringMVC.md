@@ -253,7 +253,7 @@ SpringMVC框架有它自己的配置文件，该配置文件的名字默认为�
                         <!--设置模板文件的位置（前缀）-->
                         <property name="prefix" value="/WEB-INF/templates/"/>
                         <!--设置模板文件后缀（后缀），Thymeleaf文件扩展名不一定是html，也可以是其他，例如txt，大部分都是html-->
-                        <!--将来要在 xxx.html 编写符合Thymeleaf语法格式的字符串，Thymeleaf模版字符串-->
+                        <!--将来要在 xxx.html 编写符合-->
                         <property name="suffix" value=".html"/>
                         <!--设置模板类型，例如：HTML,TEXT,JAVASCRIPT,CSS等-->
                         <property name="templateMode" value="HTML"/>
@@ -347,7 +347,7 @@ public class FirstController {
 3. DispatcherServlet根据请求路径 /haha 映射到 FirstController#名字随意()，调用该方法
 4. FirstController#名字随意() 处理请求
 5. FirstController#名字随意() 返回逻辑视图名称 first 给视图解析器
-6. 视图解析器找到 /WEB-INF/templates/first.html 文件，并进行解析，生成视图解析对象返回给前端控制器DispatcherServlet
+6. 在逻辑视图的前面假前缀，后面加后缀，(前缀和后缀在springmvc-servlet.xml中配置过)。视图解析器找到 /WEB-INF/templates/first.html 文件（这个完整的名称叫做物理视图名称），并进行解析，生成视图解析对象返回给前端控制器DispatcherServlet
 7. 前端控制器DispatcherServlet响应结果到浏览器。
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=nInVb&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
@@ -400,6 +400,7 @@ public class FirstController {
 <!-- th: 表示后面的代码可以编写Thymeleaf语法，可以被Thymeleaf语法解析 -->
 <!-- Thymeleaf检测到以 / 开始，表示绝对路径，自动会将webapp的上下文路径加上去 -->
 <!-- 最终的效果是：href="/springmvc/other" -->
+<!--@{}会被解析为项目的根路径，并且是动态获取的-->
 <a th:href="@{/other}">other请求</a>
 </body>
 </html>
@@ -454,8 +455,8 @@ webapp目录没有小蓝点怎么办？添加web支持
     </servlet-mapping>
 </web-app>
 ```
-**通过<init-param>来设置SpringMVC配置文件的路径和名字。在DispatcherServlet的init方法执行时设置的。**
-**<load-on-startup>1</load-on-startup>建议加上，这样可以提高用户第一次访问的效率。表示在web服务器启动时初始化DispatcherServlet。**
+**通过\<init-param>来设置SpringMVC配置文件的路径和名字。在DispatcherServlet的init方法执行时设置的。**
+**\<load-on-startup>1\</load-on-startup>建议加上，这样可以提高用户第一次访问的效率。表示在web服务器启动时初始化DispatcherServlet。**
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=XEPhx&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 ## 编写IndexController
@@ -492,6 +493,7 @@ public class IndexController {
 ## 提供视图
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710316353838-aac1cd57-12e3-47e4-8b73-2ea2a07a0954.png#averageHue=%23eef0f4&clientId=u0dd2e7db-835e-4&from=paste&height=128&id=u9a159361&originHeight=128&originWidth=289&originalType=binary&ratio=1&rotation=0&showTitle=false&size=7935&status=done&style=shadow&taskId=uaf3f4b6a-fb23-4ec5-8294-00978351f60&title=&width=289)
 ```html
+<!--表面上是html代码，但实际上是thymeleaf的模版字符串，需要被thymeleaf模版解析器解析之后才能转为浏览器认识的HTML代码-->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>

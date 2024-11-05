@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Spring MVC</title>
+    </head>
+
+    <body>
+        <a th:href="@{/test}">test</a>
+        <a th:href="@{/heihei}">heihei</a>
+    </body>
+</html>
