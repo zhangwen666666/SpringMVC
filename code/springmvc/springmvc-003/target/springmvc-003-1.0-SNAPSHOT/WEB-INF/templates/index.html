@@ -12,5 +12,15 @@
 <a th:href="@{/testVal1}">测试Value属性1</a>
 <a th:href="@{/testVal2}">测试Value属性2</a>
 
+<form th:action="@{/user/login}" method="get">
+    用户名：<input type="text" name="username"/><br>
+    密码：<input type="password" name="password"/><br>
+    <input type="submit" value="登录">
+</form>
+
+<br>
+
+<a th:href="@{/testParams}?username=admin&password=1234">超链接</a>
+
 </body>
 </html>

@@ -6,10 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="springmvc-006" />
+        <module name="springmvc-005" />
+        <module name="springmvc-004" />
         <module name="springmvc-003" />
         <module name="springmvc-002" />
         <module name="springmvc-001" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="springmvc-004" options="-parameters" />
+    </option>
   </component>
 </project>
