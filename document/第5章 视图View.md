@@ -37,7 +37,7 @@
 ## Spring MVC支持的常见视图
 Spring MVC支持的常见视图包括：
 
-1. InternalResourceView：内部资源视图（Spring MVC框架内置的，专门为`JSP模板语法`准备的）
+1. InternalResourceView：内部资源视图（Spring MVC框架内置的，专门为`JSP模板语法`准备的，用来完成转发）
 2. RedirectView：重定向视图（Spring MVC框架内置的，用来完成重定向效果）
 3. ThymeleafView：Thymeleaf视图（第三方的，为`Thymeleaf模板语法`准备的）
 4. FreeMarkerView：FreeMarker视图（第三方的，为`FreeMarker模板语法`准备的）
@@ -57,7 +57,7 @@ Spring MVC支持的常见视图包括：
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710824946253-84de4b12-1985-4976-ae39-dd62e77b43b8.png#averageHue=%23fbf8f6&clientId=u16fbe6d5-b81c-4&from=paste&height=293&id=ue3be2feb&originHeight=293&originWidth=893&originalType=binary&ratio=1&rotation=0&showTitle=false&size=43306&status=done&style=shadow&taskId=u6922fdb3-95ed-4c9f-be18-18482d003b9&title=&width=893)
 
 2. ViewResolver接口（视图解析器）：
-   1. 职责：负责将`逻辑视图名`转换为`物理视图名`，最终创建View接口的实现类，即视图实现类对象。
+   1. 职责：负责将`逻辑视图名`转换为`物理视图名`，最终创建View接口的实现类，即视图实现类对象。如果你使用的是Thymeleaf，那么底层会创建ThymeleafViewResolver对象。
    2. 核心方法：resolveViewName
 
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710824983130-13d175e9-be25-4e76-bccf-d50f63cee853.png#averageHue=%23fcfbfa&clientId=u16fbe6d5-b81c-4&from=paste&height=164&id=u9237c0b9&originHeight=164&originWidth=774&originalType=binary&ratio=1&rotation=0&showTitle=false&size=21642&status=done&style=shadow&taskId=ub3dd9f15-a32b-4871-a00b-48723bce0ff&title=&width=774)
@@ -65,7 +65,7 @@ Spring MVC支持的常见视图包括：
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=CF9VF&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 
 3. View接口（视图）:
-   1. 职责：负责将模型数据Model渲染为视图格式（HTML代码），并最终将生成的视图（HTML代码）输出到客户端。（它负责将模板语言转换成HTML代码）
+   1. 职责：负责将模型数据Model渲染为视图格式（HTML代码），并最终将生成的视图（HTML代码）输出到客户端。（它负责将模板语言转换成HTML代码）。如果你使用的是Thymeleaf，那么底层会创建ThymeleafView对象。
    2. 核心方法：render
 
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710825045618-8ca7d10a-9f8f-4210-a871-8b7d34885311.png#averageHue=%23fdfcfb&clientId=u16fbe6d5-b81c-4&from=paste&height=429&id=uc64e1281&originHeight=429&originWidth=802&originalType=binary&ratio=1&rotation=0&showTitle=false&size=67298&status=done&style=shadow&taskId=u2fb5e468-9143-43d6-9aec-507a5c2041e&title=&width=802)
@@ -293,23 +293,38 @@ public class IndexController {
 ## 回顾转发和重定向区别
 
 1. 转发是一次请求。因此浏览器地址栏上的地址不会发生变化。
+
 2. 重定向是两次请求。因此浏览器地址栏上的地址会发生变化。
+
 3. 转发的代码实现：request.getRequestDispatcher("/index").forward(request, response);
+
 4. 重定向的代码实现：response.sendRedirect("/webapproot/index");
+
 5. 转发是服务器内部资源跳转，由服务器来控制。不可实现跨域访问。
+
 6. 重定向可以完成内部资源的跳转，也可以完成跨域跳转。
+
 7. 转发的方式可以访问WEB-INF目录下受保护的资源。
+
 8. 重定向相当于浏览器重新发送了一次请求，在浏览器直接发送的请求是无法访问WEB-INF目录下受保护的资源的。
+
 9. 转发原理：
-   1. 假设发送了 /a 请求，执行了 AServlet
-   2. 在AServlet 中通过`request.getRequestDispatcher("/b").forward(request,response);`转发到BServlet
-   3. 从AServlet跳转到BServlet是服务器内部来控制的。对于浏览器而言，浏览器只发送了一个 /a 请求。
+   
+   * 假设发送了 /a 请求，执行了 AServlet
+   * 在AServlet 中通过`request.getRequestDispatcher("/b").forward(request,response);`转发到BServlet
+   * 从AServlet跳转到BServlet是服务器内部来控制的。对于浏览器而言，浏览器只发送了一个 /a 请求。
+   
 10. 重定向原理：
-   1. 假设发送了 /a 请求，执行了 AServlet
-   2. 在AServlet 中通过`response.sendRedirect("/webapproot/b")`重定向到BServlet
-   3. 此时服务器会将请求路径`/webapproot/b`响应给浏览器
-   4. 浏览器会自发的再次发送`/webapproot/b`请求来访问BServlet
-   5. 因此对于重定向来说，发送了两次请求，一次是 `/webapproot/a`，另一次是`/webapproot/b`。
+
+    * 假设发送了 /a 请求，执行了 AServlet
+
+    * 在AServlet 中通过`response.sendRedirect("/webapproot/b")`重定向到BServlet
+
+    * 此时服务器会将请求路径`/webapproot/b`响应给浏览器
+
+    * 浏览器会自发的再次发送`/webapproot/b`请求来访问BServlet
+
+    * 因此对于重定向来说，发送了两次请求，一次是 `/webapproot/a`，另一次是`/webapproot/b`。
 
 以上所描述的是使用原生Servlet API来完成转发和重定向。在Spring MVC中是如何转发和重定向的呢？
 
@@ -329,6 +344,10 @@ public class IndexController {
 
     @RequestMapping("/a")
     public String toA(){
+        // 当 return "a"; 的时候，返回了一个逻辑视图名称。这种方式跳转到视图，默认采用的就是 forward 方式跳转过去的。只不过这个底层创建的视图对象：ThymeleafView 
+        // return "a";
+        
+        // 转发的时候，格式有特殊要求， return "forward:下一个资源的路径";
         return "forward:/b";
     }
 
@@ -368,7 +387,7 @@ public class IndexController {
 
 这说明转发底层创建的视图对象是：InternalResourceView。
 **思考：既然会创建InternalResourceView，应该会对应一个视图解析器呀（InternalResourceViewResolver）？但是我在springmvc.xml文件中只配置了ThymeleafViewResolver，并没有配置InternalResourceViewResolver呀？这是为什么？**
-**这是因为**`**forward:**`** 后面的不是**`**逻辑视图名**`**，而是一个**`**请求路径**`**。因此转发是不需要视图解析器的。**
+**这是因为**`forward:**`** 后面的不是**`**逻辑视图名**`**，而是一个**`**请求路径**`**。因此转发是不需要视图解析器的。
 **另外，转发使用的是InternalResourceView，也说明了转发是内部资源的跳转。（Internal是内部的意思，Resource是资源的意思。）**
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=T5nVM&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
@@ -416,7 +435,7 @@ public class IndexController {
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710857964522-8ccd525e-e458-41e2-abc8-6336a46bc17c.png#averageHue=%23d5b68e&clientId=u7eaef306-20e2-4&from=paste&height=133&id=u67e2c7f3&originHeight=133&originWidth=999&originalType=binary&ratio=1&rotation=0&showTitle=false&size=35125&status=done&style=shadow&taskId=u3c450b56-5899-47ae-b2e8-f46dc146043&title=&width=999)
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710858016866-c2e30ccf-0b94-494d-9b89-0853fb2fa7af.png#averageHue=%23cca369&clientId=u7eaef306-20e2-4&from=paste&height=122&id=u75288812&originHeight=122&originWidth=610&originalType=binary&ratio=1&rotation=0&showTitle=false&size=24109&status=done&style=shadow&taskId=uef0f52d9-05fa-4734-befa-3f1240df464&title=&width=610)
 通过断点调试可以看出，当重定向的时候，SpringMVC会创建一个重定向视图对象：**RedirectView**。这个视图对象也是SpringMVC框架内置的。
-另外可以看出重定向之后的第二次请求创建的视图对象就是ThymeleafView了。
+另外可以看出重定向之后的第二次请求(相当于直接在地址栏输入"/b")创建的视图对象就是ThymeleafView了。
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=MLNVb&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 
@@ -430,10 +449,11 @@ public String a(){
 可以自行测试一下！！！
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=zHgEk&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
-# <mvc:view-controller>
+# \<mvc:view-controller>
 `<mvc:view-controller>` 配置用于将某个请求映射到特定的视图上，即指定某一个 URL 请求到一个视图资源的映射，使得这个视图资源可以被访问。它相当于是一个独立的处理程序，不需要编写任何 Controller，只需要指定 URL 和对应的视图名称就可以了。
-一般情况下，`<mvc:view-controller>` 配置可以替代一些没有业务逻辑的 Controller，例如首页、错误页面等。当用户访问配置的 URL 时，框架将直接匹配到对应的视图，而无需再经过其他控制器的处理。
+**一般情况下，`<mvc:view-controller>` 配置可以替代一些没有业务逻辑的 Controller，例如首页、错误页面等**。当用户访问配置的 URL 时，框架将直接匹配到对应的视图，而无需再经过其他控制器的处理。
 `<mvc:view-controller>` 配置的格式如下： 
+
 ```xml
 <mvc:view-controller path="/如何访问该页面" view-name="对应的逻辑视图名称" />
 ```
@@ -449,18 +469,18 @@ public String a(){
 上述配置将会匹配上访问应用程序的根路径，如：http://localhost:8080/。当用户在浏览器中访问该根路径时，就会直接渲染名为 `index` 的视图。
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=jRx1M&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
-# <mvc:annotation-driven/>
+# \<mvc:annotation-driven/>
 在SpringMVC中，如果在springmvc.xml文件中配置了 `<mvc:view-controller>`，就需要同时在springmvc.xml文件中添加如下配置：
 ```xml
 <mvc:annotation-driven/>
 ```
 该配置的作用是：启用Spring MVC的注解。
-如果没有以上的配置，Controller就无法访问到。访问之前的Controller会发生 404 问题。
+如果没有以上的配置，Controller就无法访问到。访问之前的Controller会发生 404 问题。(如果没有以上的配置，原来的那些注解，例如@Controller，@RequestMapping注解就全都失效的，需要以上配置来开启注解)
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=IpycH&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 # 访问静态资源
 一个项目可能会包含大量的静态资源，比如：css、js、images等。
-由于我们DispatcherServlet的url-pattern配置的是“/”，之前我们说过，这个"/"代表的是除jsp请求之外的所有请求，也就是说访问应用中的静态资源，也会走DispatcherServlet，这会导致404错误，无法访问静态资源，如何解决，两种方案：
+由于我们DispatcherServlet的url-pattern配置的是“/”，之前我们说过，这个"/"代表的是除jsp请求之外的所有请求，也就是说访问应用中的静态资源，也会走DispatcherServlet，而DispatcherServlet并没有对静态资源对应的路径做视图映射，这会导致404错误，无法访问静态资源，如何解决，两种方案：
 
 - 使用默认 Servlet 处理静态资源
 - 使用 `mvc:resources` 标签配置静态资源处理

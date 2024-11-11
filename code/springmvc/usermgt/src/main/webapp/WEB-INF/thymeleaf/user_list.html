@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>用户列表</title>
+  <link rel="stylesheet" th:href="@{/static/css/user.css}" type="text/css"></link>
+</head>
+<body>
+  <div class="header">
+    <h1>用户列表</h1>
+  </div>
+  <div class="add-button-wrapper">
+    <a class="add-button" th:href="@{/toAdd}">新增用户</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>编号</th>
+        <th>用户名</th>
+        <th>性别</th>
+        <th>邮箱</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+	<tbody>
+      <tr th:each="user: ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.sex == 0? '女': '男'}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+          <a th:href="@{'/user/' + ${user.id}}">修改</a>
+          <a th:href="@{'/user/' + ${user.id}}" onclick="del(event)">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="display: none">
+    <form id="delForm" method="post">
+      <input type="hidden" name="_method" value="delete">
+    </form>
+  </div>
+
+
+<script>
+  function del(event){
+    let delForm = document.getElementById("delForm");
+    delForm.action = event.target.href;
+    if(window.confirm("是否确认删除?")){
+      delForm.submit();
+    }
+    event.preventDefault();
+  }
+</script>
+</body>
+</html>

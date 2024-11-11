@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>新增用户</title>
+  <link rel="stylesheet" th:href="@{/static/css/user.css}" type="text/css"></link>
+</head>
+<body>
+  <h1>新增用户</h1>
+  <form th:action="@{/user}" method="post">
+    <label>用户名:</label>
+    <input type="text" name="username" required>
+
+    <label>性别:</label>
+    <select name="sex" required>
+      <option value="">-- 请选择 --</option>
+      <option value="1">男</option>
+      <option value="0">女</option>
+    </select>
+
+    <label>邮箱:</label>
+    <input type="email" name="email" required>
+
+	<button type="submit">保存</button>
+  </form>
+</body>
+</html>

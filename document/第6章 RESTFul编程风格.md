@@ -30,7 +30,7 @@ REST对URL的约束是这样的：
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=soshf&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 
-RESTFul对URL的约束和规范的核心是：**通过采用**`**不同的请求方式**`**+ **`**URL**`**来确定WEB服务中的资源。**
+RESTFul对URL的约束和规范的核心是：<span style="color:red;">**通过采用`不同的请求方式`**+ **`URL`来确定WEB服务中的资源。**</span>
 
 **RESTful 的英文全称是 Representational State Transfer（表述性状态转移）。简称REST。**
 表述性（Representational）是：URI + 请求方式。
@@ -205,15 +205,15 @@ public String save(){
 RESTFul规范中规定，如果要进行保存操作，需要发送PUT请求。
 **如何发送PUT请求？**
 **第一步：首先你必须是一个POST请求。**
-**第二步：在发送POST请求的时候，提交这样的数据：**`**_method=PUT**`
-**第三步：在web.xml文件配置SpringMVC提供的过滤器：HiddenHttpMethodFilter**
+**第二步：在发送POST请求的时候，提交这样的数据：`_method=PUT`
+第三步：在web.xml文件配置SpringMVC提供的过滤器：HiddenHttpMethodFilter**
 
 实践一下：
 ```html
 <!--修改用户-->
 <hr>
 <form th:action="@{/api/user}" method="post">
-    <!--隐藏域的方式提交 _method=put -->
+    <!--隐藏域的方式提交 _method=put。  这里的name必须是_method, value必须是put或者PUT -->
     <input type="hidden" name="_method" value="put">
     用户名：<input type="text" name="username"><br>
     <input type="submit" th:value="修改">
@@ -269,7 +269,42 @@ public String update(String username){
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=SrPmT&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 
+## RESTFul方式演示删除
+
+```html
+<a th:href="@{/user/120}" onclick="del(event)">删除用户id=120的用户信息</a><br>
+
+<!--准备一个form表单提交DELETE请求-->
+<form id="delForm" method="post">
+    <input type="hidden" name="_method" value="delete"/>
+</form>
+
+<script>
+    function del(event){
+        // 获取表单
+        let delForm = document.getElementById("delForm");
+        // 给表单的action属性赋值
+        delForm.action = event.target.href;
+        // 发送post请求提交表单
+        delForm.submit();
+        // 阻止表单默认行为
+        event.preventDefault();
+    }
+</script>
+```
+
+```java
+@RequestMapping(value = {"/user/{id}"}, method = RequestMethod.DELETE)
+public String deleteById(@PathVariable("id") Integer id) {
+    System.out.println("正在删除id=" + id + "的用户...");
+    return "ok";
+}
+```
+
+
+
 ## HiddenHttpMethodFilter
+
 HiddenHttpMethodFilter是Spring MVC框架提供的，专门用于RESTFul编程风格。
 实现原理可以通过源码查看：
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1710981996209-5c66441b-0aa9-41a7-b71d-26b2ffb0f4f5.png#averageHue=%23fdfaf9&clientId=u1c5395e7-28c7-4&from=paste&height=587&id=u35d657b9&originHeight=587&originWidth=1291&originalType=binary&ratio=1&rotation=0&showTitle=false&size=91768&status=done&style=shadow&taskId=u077ff919-ffea-49a1-9104-627c073a7e2&title=&width=1291)

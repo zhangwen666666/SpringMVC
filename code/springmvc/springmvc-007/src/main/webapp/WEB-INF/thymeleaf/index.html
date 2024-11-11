@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Index Page!!!</h1>
+<hr>
+
+<a th:href="@{/user}">查看用户列表</a><br>
+
+<a th:href="@{/user/1}">查询id=1的用户信息</a><br>
+
+
+<form th:action="@{/user}" method="post">
+    用户名：<input type="text" name="username"/><br>
+    密码：<input type="password" name="password"/><br>
+    年龄：<input type="number" name="age"/><br>
+    <input type="submit" value="提交"/>
+</form>
+<br>
+
+<form th:action="@{/user}" method="post">
+    <input type="hidden" name="_method" value="PUT">
+    用户名：<input type="text" name="username"/><br>
+    密码：<input type="password" name="password"/><br>
+    年龄：<input type="number" name="age"/><br>
+    <input type="submit" value="提交"/>
+</form>
+<br>
+
+<a th:href="@{/user/120}" onclick="del(event)">删除用户id=120的用户信息</a><br>
+
+<!--准备一个form表单提交DELETE请求-->
+<form id="delForm" method="post">
+    <input type="hidden" name="_method" value="delete"/>
+</form>
+
+<script>
+    function del(event){
+        // 获取表单
+        let delForm = document.getElementById("delForm");
+        // 给表单的action属性赋值
+        delForm.action = event.target.href;
+        // 发送post请求提交表单
+        delForm.submit();
+        // 阻止表单默认行为
+        event.preventDefault();
+    }
+</script>
+
+</body>
+</html>
