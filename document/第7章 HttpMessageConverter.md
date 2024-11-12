@@ -455,6 +455,7 @@ public String send(@RequestBody User user){
     System.out.println(user);
     System.out.println(user.getUsername());
     System.out.println(user.getPassword());
+    // 这里前端发送的ajax请求，所以返回值“success”不是逻辑视图名称，而是一个普通的字符串
     return "success";
 }
 ```
@@ -584,7 +585,7 @@ public String send(RequestEntity<User> requestEntity){
 ```
 测试结果：
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1711032010156-cb98e4a9-5238-4dd6-ac1a-81dd6198a47d.png#averageHue=%23f9f2f0&clientId=u84c24dc6-b425-4&from=paste&height=253&id=u780ddfcd&originHeight=253&originWidth=615&originalType=binary&ratio=1&rotation=0&showTitle=false&size=36432&status=done&style=shadow&taskId=u179ddeb5-a404-4236-8356-c24a241d08f&title=&width=615)
-在实际的开发中，如果你需要获取更详细的请求协议中的信息。可以使用`RequestEntity`
+<span style="color:red;">**在实际的开发中，如果你需要获取更详细的请求协议中的信息。可以使用`RequestEntity`**</span>
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=Kbp67&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
 # ResponseEntity

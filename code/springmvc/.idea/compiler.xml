@@ -14,6 +14,10 @@
         <module name="usermgt" />
         <module name="springmvc-002" />
         <module name="springmvc-001" />
+        <module name="springmvc-011" />
+        <module name="springmvc-010" />
+        <module name="springmvc-009" />
+        <module name="springmvc-008" />
       </profile>
     </annotationProcessing>
   </component>
