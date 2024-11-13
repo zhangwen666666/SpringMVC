@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans>
+    <!--组件扫描-->
+    <component-scan base-package="com.zw.oa.controller"/>
+    <!--视图解析器-->
+    <bean class="org.springmvc.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--拦截器-->
+    <interceptors>
+        <bean class="com.zw.oa.interceptors.Interceptor1"/>
+        <bean class="com.zw.oa.interceptors.Interceptor2"/>
+    </interceptors>
+</beans>

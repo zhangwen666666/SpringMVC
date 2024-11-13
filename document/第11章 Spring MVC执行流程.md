@@ -129,3 +129,59 @@ DispatcherServlet extends FrameworkServlet extends HttpServletBean extends HttpS
 ![image.png](https://cdn.nlark.com/yuque/0/2024/png/21376908/1711945408231-6e96abeb-ceff-480e-9f2c-72bfa2a5d419.png#averageHue=%23302d2c&clientId=u47cca508-d3a6-4&from=paste&height=577&id=u9d958078&originHeight=577&originWidth=748&originalType=binary&ratio=1&rotation=0&showTitle=false&size=80827&status=done&style=none&taskId=u81fde2bc-f1cc-4d5b-acf9-6b8a3c3a9ae&title=&width=748)
 
 ![标头.jpg](https://cdn.nlark.com/yuque/0/2023/jpeg/21376908/1692002570088-3338946f-42b3-4174-8910-7e749c31e950.jpeg#averageHue=%23f9f8f8&clientId=uc5a67c34-8a0d-4&from=paste&height=78&id=g9qiR&originHeight=78&originWidth=1400&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23158&status=done&style=shadow&taskId=u98709943-fd0b-4e51-821c-a3fc0aef219&title=&width=1400)
+
+# 总结执行流程
+
+1. 用户发送请求到前端控制器。
+
+2. 前端控制器接收到请求之后，<span style="color:red;">**通过合适的处理器映射器（即一个HandlerMapping对象）的getHandler方法来获取请求所对应的处理器执行链对象HandlerExecutionChain对象mappedHandler**</span>。
+
+   ```java
+   HandlerExecutionChain mappedHandler = handlerMapping.getHandler(request);
+   ```
+
+   HandlerMapping有很多实现类，其中有一个实现类是：RequestMappingHandlerMapping ，叫做：@RequestMapping注解专用的处理器映射器对象。
+
+   * 处理器执行链中包括三个重要的属性：处理器方法(HandlerMethod handler)，拦截器集合，以及拦截器下标。
+   * 处理器映射器中有一个Map<RequestMappingInfo, HandlerMethod>集合，该集合是在服务器启动的时候初始化的，key部分是一个RequestMappingInfo对象。value部分是处理器方法对象。
+     * RequestMappingInfo对象封装了请求信息，包括请求所对应的URI和请求方式。
+     * value对象是处理器方法对象，即该请求所对应的那个方法。底层实际是一个HandlerMethod对象handler。该处理器方法封装了真正的处理器对象，即controller对象，以及真正要调用的方法。**通过将传入的request参数封装为RequestMappingInfo对象，然后通过这个map集合的key就可以获取到value了，即获取到处理器方法对象handler。**
+   * 拦截器集合也是在服务器启动的时候初始化的，存放了该请求所对应的所有拦截器，是一个List集合。
+
+3. <span style="color:red;">**根据执行链对象中的处理器方法(handler)来获取对应的HandlerAdapter**</span>。HandlerAdapter有很多实现类，其中有一个实现类是RequestMappingHandlerAdapter，是专门给 @RequestMapping 注解使用的。
+
+4. 执行所有拦截器的preHandle方法。
+
+5. <span style="color:red;">**执行处理器适配器的handle方法，返回ModelAndView对象mv。**</span>ModelAndView对象封装了数据以及逻辑视图名称。handle方法有三个参数：
+
+   * request
+   * response
+   * 处理器执行链对象mappedHandler中的处理器方法handler。(这个handler是一个HandlerMethod对象，封装了真正的处理器对象和方法，通过反射机制调用该方法，**调用该方法时需要处理参数**，例如前端是一个form表单提交数据，这里需要处理成一个pojo类对象传给该方法。)
+
+   ```java
+    ModelAndView mv = ha.handler(request, response, mappedHandler.getHandler());
+   ```
+
+6. 执行拦截器中的postHandle方法。
+
+7. 将ModelAndView对象mv的逻辑视图名称做为参数传给对应的<span style="color:red;">**视图解析器ViewResolver的resolverViewName方法，将逻辑视图名称转换为物理视图名称并设置了响应的内容类型，获取视图对象View。**</span>这里ViewResolver是一个接口，最中这个方式是由其实现类实现的，如果使用Thymeleaf模板引擎，则实现类是ThymeleafViewResolver(第三方实现的)，如果使用JSP模版引擎，则实现类是InternalResourceViewResolver(SpringMVC框架实现的)。
+
+   ```java
+   View view = viewResolver.resolverViewName(mv.getView().toString(), Locale.CHINA);
+   ```
+
+8. <span style="color:red;">**执行View对象的render方法渲染页面**</span>，render方法需要三个参数：
+
+   * ModelAndView对象封装的数据model
+   * request
+   * response
+
+   View对象中有两个属性，响应的内容类型和转发的路径。渲染页面时所做的事：设置响应的内容类型，将model中的所有数据存储到request域当中，转发到渲染的页面上。View是一个接口，最中render方式是其实现类实现的，如果使用Thymeleaf模板引擎，则实现类是ThymeleafView(第三方实现的)，如果使用JSP模版引擎，则实现类是InternalResourceView(SpringMVC框架实现的)。
+
+   ```java
+   view.render(mv.getModel(), request, response);
+   ```
+
+9. 执行拦截器的afterCompletion方法。
+
+10. 将最终的页面响应给用户。

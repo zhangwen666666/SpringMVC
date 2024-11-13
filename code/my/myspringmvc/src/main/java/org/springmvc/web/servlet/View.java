@@ -9,6 +9,13 @@ import java.util.Map;
  * 视图接口
  */
 public interface View {
+
+    /**
+     * 获取内容类型
+     * @return
+     */
+    String getContentType();
+
     /**
      * 渲染页面
      * @param model

@@ -7,14 +7,14 @@ import org.springmvc.ui.ModelMap;
  */
 public class ModelAndView {
     private Object view;
-    private ModelMap modelMap;
+    private ModelMap model;
 
     public ModelAndView() {
     }
 
-    public ModelAndView(Object view, ModelMap modelMap) {
+    public ModelAndView(Object view, ModelMap model) {
         this.view = view;
-        this.modelMap = modelMap;
+        this.model = model;
     }
 
     public Object getView() {
@@ -25,11 +25,15 @@ public class ModelAndView {
         this.view = view;
     }
 
-    public ModelMap getModelMap() {
-        return modelMap;
+    public ModelMap getModel() {
+        return model;
     }
 
-    public void setModelMap(ModelMap modelMap) {
-        this.modelMap = modelMap;
+    public void setModel(ModelMap model) {
+        this.model = model;
+    }
+
+    public void setViewName(String viewName){
+        setView(viewName);
     }
 }

@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface HandlerMapping {
     /**
-     * 根据请求返回处理器执行链对象
+     * 根据请求（请求路径和请求凡事）返回处理器执行链对象
      * @param request
      * @return
      * @throws Exception
